@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity
         initSpinner();
         initCurrencyList();
         initLineChart();
+        addActionButtonListener();
         showLogs();
 
         logLayout = (CoordinatorLayout) findViewById(R.id.log_layout);
@@ -355,6 +357,41 @@ public class MainActivity extends AppCompatActivity
 
     private void resetDownloads() {
         SharedPreferencesUtils.updateNumDownloads(this, 0);
+    }
+
+    private void addActionButtonListener() {
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.fab);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popupMenu = new PopupMenu(MainActivity.this, floatingActionButton);
+                popupMenu.getMenuInflater().inflate(R.menu.popup_menu, popupMenu.getMenu());
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch(item.getItemId()) {
+                            case R.id.clear_database:
+                                currencyTableHelper.clearCurrencyTable();
+                                LogUtils.log(TAG, "Currency Database has been cleared.");
+                                lineChart.clearValues();
+                                updateLineChart();
+                                break;
+                            case R.id.graph:
+                                findViewById(R.id.currency_list_layout).setVisibility(View.GONE);
+                                lineChart.setVisibility(View.VISIBLE);
+                                updateLineChart();
+                                break;
+                            case R.id.selection:
+                                findViewById(R.id.currency_list_layout).setVisibility(View.VISIBLE);
+                                lineChart.setVisibility(View.GONE);
+                                break;
+                        }
+                        return true;
+                    }
+                });
+                popupMenu.show();
+            }
+        });
     }
 
     @Override
