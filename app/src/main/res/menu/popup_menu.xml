@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/selection"
+        android:title="@string/popup_menu_selection"/>
+
+    <item
+        android:id="@+id/clear_database"
+        android:title="@string/popup_menu_clear_database"/>
+
+    <item
+        android:id="@+id/graph"
+        android:title="@string/popup_menu_show_graph"/>
+
+</menu>

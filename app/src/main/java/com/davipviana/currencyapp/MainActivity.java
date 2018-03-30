@@ -2,9 +2,11 @@ package com.davipviana.currencyapp;
 
 import android.content.Intent;
 import android.database.SQLException;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -26,7 +28,16 @@ import com.davipviana.currencyapp.utils.LogUtils;
 import com.davipviana.currencyapp.utils.NotificationUtils;
 import com.davipviana.currencyapp.utils.SharedPreferencesUtils;
 import com.davipviana.currencyapp.value_objects.Currency;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity
@@ -40,10 +51,14 @@ public class MainActivity extends AppCompatActivity
     private int serviceRepetition = AlarmUtils.REPEAT.REPEAT_EVERY_MINUTE.ordinal();
 
     private CoordinatorLayout logLayout;
+    private FloatingActionButton floatingActionButton;
+
     private boolean isLogVisible = true;
+    private boolean isFabVisible = true;
 
     private ListView baseCurrencyList;
     private ListView targetCurrencyList;
+    private LineChart lineChart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +71,7 @@ public class MainActivity extends AppCompatActivity
         initToolbar();
         initSpinner();
         initCurrencyList();
+        initLineChart();
         showLogs();
 
         logLayout = (CoordinatorLayout) findViewById(R.id.log_layout);
@@ -115,6 +131,8 @@ public class MainActivity extends AppCompatActivity
                                     serviceRepetition = AlarmUtils.REPEAT.REPEAT_EVERY_DAY.ordinal();
                                     retrieveCurrencyExchangeRate();
                                 }
+                            } else {
+                                updateLineChart();
                             }
                         }
                     }
@@ -213,6 +231,83 @@ public class MainActivity extends AppCompatActivity
                 retrieveCurrencyExchangeRate();
             }
         });
+    }
+
+    private void initLineChart() {
+        lineChart = (LineChart) findViewById(R.id.line_chart);
+        lineChart .setNoDataText("No Data");
+        lineChart .setHighlightEnabled(true);
+        lineChart .setTouchEnabled(true);
+        lineChart .setDragEnabled(true);
+        lineChart .setScaleEnabled(true);
+        lineChart .setDrawGridBackground(false);
+        lineChart .setPinchZoom(true);
+
+        LineData lineData = new LineData();
+        lineData.setValueTextColor(Color.BLUE);
+        lineChart .setData(lineData);
+
+        Legend legend = lineChart .getLegend();
+        legend.setForm(Legend.LegendForm.LINE);
+        legend.setTextColor(ColorTemplate.getHoloBlue());
+
+        XAxis xAxis = lineChart .getXAxis();
+        xAxis.setTextColor(Color.BLACK);
+        xAxis.setDrawGridLines(false);
+        xAxis.setAvoidFirstLastClipping(true);
+
+        YAxis yAxis = lineChart .getAxisLeft();
+        yAxis.setTextColor(Color.BLACK);
+        yAxis.setAxisMaxValue(120f);
+        yAxis.setDrawGridLines(true);
+
+        YAxis yAxisRight = lineChart .getAxisRight();
+        yAxisRight.setEnabled(false);
+    }
+
+    private void updateLineChart() {
+        lineChart .setDescription("Currency Exchange Rate: " + baseCurrency + " - " + targetCurrency);
+        ArrayList<Currency> currencies = currencyTableHelper.getCurrencyHistory(baseCurrency, targetCurrency);
+        LineData lineData = lineChart.getData();
+        lineData.clearValues();
+        for(Currency currency : currencies) {
+            addChartEntry(currency.getDate(), currency.getRate());
+        }
+    }
+
+    private void addChartEntry(String date, double value) {
+        LineData lineData = lineChart.getData();
+        if(lineData != null) {
+            LineDataSet lineDataSet = lineData.getDataSetByIndex(0);
+            if(lineDataSet == null) {
+                lineDataSet = createSet();
+                lineData.addDataSet(lineDataSet);
+            }
+
+            if(!lineChart.getData().getXVals().contains(date)) {
+                lineData.addXValue(date);
+            }
+            lineData.addEntry(new Entry((float) value, lineDataSet.getEntryCount()), 0);
+            lineChart.notifyDataSetChanged();
+        }
+    }
+
+    private LineDataSet createSet() {
+        LineDataSet lineDataSet = new LineDataSet(null, "Value");
+        lineDataSet.setDrawCubic(true);
+        lineDataSet.setCubicIntensity(0.2f);
+        lineDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
+        lineDataSet.setColor(ColorTemplate.getHoloBlue());
+        lineDataSet.setCircleColor(ColorTemplate.getHoloBlue());
+        lineDataSet.setLineWidth(2f);
+        lineDataSet.setCircleSize(4f);
+        lineDataSet.setFillAlpha(65);
+        lineDataSet.setFillColor(ColorTemplate.getHoloBlue());
+        lineDataSet.setHighLightColor(Color.CYAN);
+        lineDataSet.setValueTextColor(Color.BLACK);
+        lineDataSet.setValueTextSize(10f);
+
+        return lineDataSet;
     }
 
     private void initCurrencies() {
