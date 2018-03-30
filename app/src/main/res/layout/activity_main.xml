@@ -16,8 +16,8 @@
             android:id="@+id/time_frequency"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:prompt="@string/currency_prompt"
-            android:entries="@array/currency_time"/>
+            android:entries="@array/currency_time"
+            android:prompt="@string/currency_prompt" />
     </android.support.v7.widget.Toolbar>
 
     <LinearLayout
@@ -25,6 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
+        android:layout_below="@+id/toolbar"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -43,20 +44,20 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.49"
-                    android:choiceMode="singleChoice"/>
+                    android:choiceMode="singleChoice" />
 
                 <View
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.02"
-                    android:background="@android:color/holo_blue_dark"/>
+                    android:background="@android:color/holo_blue_dark" />
 
                 <ListView
                     android:id="@+id/target_currency_list"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.49"
-                    android:choiceMode="singleChoice"/>
+                    android:choiceMode="singleChoice" />
             </LinearLayout>
         </RelativeLayout>
 
@@ -70,15 +71,16 @@
                 android:id="@+id/log_scroll"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/holo_blue_bright"/>
+                android:background="@android:color/holo_blue_bright">
 
-            <TextView
-                android:id="@+id/log_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="20dp"
-                android:textColor="@android:color/white"
-                android:textSize="14sp"/>
+                <TextView
+                    android:id="@+id/log_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp" />
+            </ScrollView>
         </android.support.design.widget.CoordinatorLayout>
     </LinearLayout>
 </RelativeLayout>

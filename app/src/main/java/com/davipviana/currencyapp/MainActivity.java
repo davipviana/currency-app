@@ -278,7 +278,7 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.action_show_logs:
                 isLogVisible = !isLogVisible;
-                item.setIcon(isLogVisible ? R.mipmap.ic_keyboard_hide : R.mipmap.ic_keyboard);
+                item.setIcon(isLogVisible ? R.drawable.ic_keyboard_hide : R.drawable.ic_keyboard);
                 logLayout.setVisibility(isLogVisible ? View.VISIBLE : View.GONE);
                 break;
 

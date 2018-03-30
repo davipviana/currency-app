@@ -10,6 +10,6 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_margin="10dp"
-        android:textColor="@drawable/currency_text_selector"
+        android:textColor="@color/currency_text_selector"
         android:textSize="14sp"/>
 </RelativeLayout>
