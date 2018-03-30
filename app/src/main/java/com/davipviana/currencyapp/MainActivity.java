@@ -1,6 +1,7 @@
 package com.davipviana.currencyapp;
 
 import android.content.Intent;
+import android.database.SQLException;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +9,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.davipviana.currencyapp.database.CurrencyDatabaseAdapter;
+import com.davipviana.currencyapp.database.CurrencyTableHelper;
 import com.davipviana.currencyapp.receivers.CurrencyReceiver;
 import com.davipviana.currencyapp.services.CurrencyService;
 import com.davipviana.currencyapp.utils.LogUtils;
@@ -18,6 +21,7 @@ public class MainActivity extends AppCompatActivity
 
     private String baseCurrency = Constants.CURRENCY_CODES[30];
     private String targetCurrency = Constants.CURRENCY_CODES[0];
+    private CurrencyTableHelper currencyTableHelper;
 
     private static final String TAG = MainActivity.class.getName();
 
@@ -26,6 +30,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initDB();
         retrieveCurrencyExchangeRate();
     }
 
@@ -45,6 +50,19 @@ public class MainActivity extends AppCompatActivity
                             String message = "Currency: " + currencyParcel.getBase() + " - " +
                                     currencyParcel.getName() + ": " + currencyParcel.getRate();
                             LogUtils.log(TAG, message);
+                            long id = currencyTableHelper.insertCurrency(currencyParcel);
+                            Currency currency = currencyParcel;
+                            try {
+                                currency = currencyTableHelper.getCurrency(id);
+                            } catch(SQLException e) {
+                                e.printStackTrace();
+                                LogUtils.log(TAG, "Currency retrieval has failed");
+                            }
+                            if(currency != null) {
+                                String dbMessage = "Currency (DB): " + currency.getBase() + " - " +
+                                        currency.getName() + ": " + currency.getRate();
+                                LogUtils.log(TAG, dbMessage);
+                            }
                         }
                     }
                 });
@@ -57,6 +75,10 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void initDB() {
+        CurrencyDatabaseAdapter currencyDatabaseAdapter = new CurrencyDatabaseAdapter(this);
+        currencyTableHelper = new CurrencyTableHelper(currencyDatabaseAdapter);
+    }
 
     private void retrieveCurrencyExchangeRate() {
         CurrencyReceiver receiver = new CurrencyReceiver(new Handler());
