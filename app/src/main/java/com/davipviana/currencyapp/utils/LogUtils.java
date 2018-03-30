@@ -45,7 +45,7 @@ public class LogUtils {
         printLogs();
     }
 
-    public static void setLogListener(LogListener logListener) {
-        logListener = logListener;
+    public static void setLogListener(LogListener newLogListener) {
+        logListener = newLogListener;
     }
 }
