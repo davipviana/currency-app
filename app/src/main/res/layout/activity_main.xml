@@ -60,6 +60,13 @@
                     android:layout_weight="0.49"
                     android:choiceMode="singleChoice" />
             </LinearLayout>
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/line_chart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"/>
+            
         </RelativeLayout>
 
         <android.support.design.widget.CoordinatorLayout
