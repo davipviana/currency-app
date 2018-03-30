@@ -414,6 +414,12 @@ public class MainActivity extends AppCompatActivity
                 logLayout.setVisibility(isLogVisible ? View.VISIBLE : View.GONE);
                 break;
 
+            case R.id.action_show_fab:
+                isFabVisible = !isFabVisible;
+                item.setIcon(isFabVisible ? R.drawable.ic_remove : R.drawable.ic_add);
+                floatingActionButton.setVisibility(isFabVisible ? View.VISIBLE : View.GONE);
+                break;
+
             default:
                 break;
         }
